@@ -129,6 +129,26 @@ public class UserServiceImpl implements UserService{
 		
 	}
 
+	@Override
+	public void deleteFilesByUserId(Long id) {
+		List<UserFiles> userFiles=userFileRepository.findFilesByUserId(id);
+		if(userFiles!=null && userFiles.size()>0) {
+			for(UserFiles dbFile:userFiles) {
+				File dbStoreFile=new File(context.getRealPath("images"+File.separator+dbFile.getModifiedFileName()));
+				if(dbStoreFile.exists()) {
+					dbStoreFile.delete();
+				}
+			}
+			userFileRepository.deleteFilesByUserId(id);
+		}
+		
+	}
+
+	@Override
+	public void deleteUserByUserId(Long id) {
+		userRepository.deleteById(id);
+	}
+
 	
 
 

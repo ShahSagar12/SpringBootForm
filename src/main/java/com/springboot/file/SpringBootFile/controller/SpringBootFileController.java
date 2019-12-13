@@ -66,6 +66,21 @@ public class SpringBootFileController {
 		}	
 	}
 	
+	@GetMapping("/deleteuser/{id}")
+	public String delete(Model model,@PathVariable Long id,RedirectAttributes redirectAttributes) {
+		userService.deleteFilesByUserId(id);
+		userService.deleteUserByUserId(id);
+		redirectAttributes.addFlashAttribute("successMessage","User deleted Successfully");
+		return "redirect:/";
+	}
+	
+	@GetMapping("/viewuser/{id}")
+	public String viewuser(Model model,@PathVariable Long id) {
+		model.addAttribute("users",userService.getAll());
+		model.addAttribute("user",userService.findById(id));
+		model.addAttribute("files",userService.findFilesByUserId(id));
+		return "view/viewuser";
+	}
 	
 
 }

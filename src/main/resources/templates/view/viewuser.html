@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>User Form</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+	rel="stylesheet" type="text/css" />
+<style>
+.imagecontainer {
+	position: relative;
+	width: 100%;
+	max-width: 400px;
+}
+
+.overlay {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+	transition: .3s ease;
+	border-radius: 50%;
+}
+
+.imagecontainer:hover .overlay {
+	opacity: 1;
+}
+
+.icon {
+	color: white;
+	font-size: 40px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	text-align: center;
+}
+
+.fa-trash:hover {
+	color: red;
+}
+</style>
+</head>
+
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<h2>User Information</h2>
+				<table class="table table-stripped table-bordered"
+					style="width: 100%;">
+					<tr>
+						<th>First Name</th>
+						<td th:text="${user.firstName}"></td>
+						<th>Last Name</th>
+						<td th:text="${user.lastName}"></td>
+						<th>Email</th>
+						<td th:text="${user.email}"></td>
+						<th>Phone Number</th>
+						<td th:text="${user.phoneNumber}"></td>
+					</tr>
+
+				</table>
+				<a th:href="@{'/downloadfileaszip/'+${user.id}}"
+					style="float: right;"><i class="fas fa-file-archive"
+					aria-hidden="true" style="font-size: 32px;"></i></a>
+				<div class="form-group">
+					<span th:each="file, itrStat:${files}" class="imagecontainer"
+						th:id="'imageindex'+${itrStat.index}"> <img
+						th:src="@{'/images/'+${file.modifiedFileName}}"
+						style="width: 80px; height: 80px; border-radius: 50%; margin-left: 10px;"
+						class="image"
+						th:if="${file.fileExtension!='pdf' and file.fileExtension!='xls' and file.fileExtension!='xlsx'}">
+						<img th:src="@{'/img/pdficon.jpg'}"
+						style="width: 80px; height: 80px; border-radius: 50%; margin-left: 10px;"
+						class="image" th:if="${file.fileExtension=='pdf'}"> <img
+						th:src="@{'/img/xlsicon.png'}"
+						style="width: 80px; height: 80px; border-radius: 50%; margin-left: 10px;"
+						class="image"
+						th:if="${file.fileExtension =='xls' or file.fileExtension =='xlsx'}">
+						<span class="overlay"> <a
+							th:href="@{'/downloadfile/'+${file.fileName}+'/'+${file.modifiedFileName}}"
+							class="icon"><i class="fa fa-download" style="color: white;"></i></a>
+
+					</span>
+					</span>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<h2>All Users</h2>
+				<div style="margin-top: 20px;">
+					<table class="table table-stripped table-bordered"
+						style="width: 100%;">
+						<thead>
+							<tr>
+								<th>First Name</th>
+								<th>Last Name</th>
+								<th>Email</th>
+								<th>Phone Number</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="user:${users}">
+								<td th:text="${user.firstName}"></td>
+								<td th:text="${user.lastName}"></td>
+								<td th:text="${user.email}"></td>
+								<td th:text="${user.phoneNumber}"></td>
+								<td><a th:href="@{'/viewuser/'+${user.id}}"><i
+										class="fas fa-eye" style="font-size: 24px;"></i></a> <a
+									th:href="@{'/edituser/'+${user.id}}"><i class="fa fa-edit"
+										style="font-size: 21px;"></i></a> <a href="#"
+									class="confirm-delete"
+									th:attr="data-id=${user.id},data-name=${user.firstName+' '+user.lastName}"><i
+										class="fa fa-trash" style="font-size: 21px; color: red;"></i></a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			$('.confirm-delete').on('click', function(e) {
+				e.preventDefault();
+				var id = $(this).data('id');
+				var name = $(this).data('name');
+				$('#modal-name').html(name);
+				$('#idModalLink').attr('href', '/deleteuser/' + id);
+				$('#myModal').modal();
+			})
+		});
+	</script>
+	<div class="modal fade" id="myModal" tabindex="-1"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body" id="myModalBody">
+					<p>
+						Do you want to delete this (<span id="modal-name"></span>) record?
+					</p>
+				</div>
+				<div class="modal-footer" id="myModalFooter">
+					<a id="idModalLink" href="#" class="btn btn-primary">Yes</a>
+					<button type="button" class="btn btn-default" data-dismiss=modal>No</button>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>

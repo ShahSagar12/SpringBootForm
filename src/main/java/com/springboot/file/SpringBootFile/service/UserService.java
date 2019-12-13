@@ -17,4 +17,8 @@ public interface UserService {
 
 	User update(User user);
 
+	void deleteFilesByUserId(Long id);
+
+	void deleteUserByUserId(Long id);
+
 }
